@@ -467,7 +467,8 @@ Notifications.merge = async function (notifications) {
 					const usernames = _.uniq(set.map(notifObj => notifObj && notifObj.user && notifObj.user.displayname));
 					if (usernames.length === 2 || usernames.length === 3) {
 						notifObj.bodyShort = `[[${mergeId}-${typeFromLength(usernames)}, ${usernames.join(', ')}, ${notifObj.roomIcon}, ${notifObj.roomName}]]`;
-					} if (usernames.length > 3) {
+					}
+					if (usernames.length > 3) {
 						notifObj.bodyShort = `[[${mergeId}-${typeFromLength(usernames)}, ${usernames.slice(0, 2).join(', ')}, ${usernames.length - 2}, ${notifObj.roomIcon}, ${notifObj.roomName}]]`;
 					}
 
