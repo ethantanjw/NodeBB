@@ -5,6 +5,8 @@ const assert = require('assert');
 const nconf = require('nconf');
 const util = require('util');
 
+const _ = require('lodash');
+
 const db = require('./mocks/databasemock');
 const meta = require('../src/meta');
 const user = require('../src/user');
@@ -429,5 +431,78 @@ describe('Notifications', () => {
 				});
 			});
 		});
+	});
+
+
+
+
+	it('should format bodyShort correctly when there are 2 or 3 usernames', () => {
+		const mergeId = 'notifications:user-posted-in-public-room';
+		const set = [
+			{ user: { displayname: 'user1' }, roomIcon: 'icon-room', roomName: 'Room Name', path: '/path1' },
+			{ user: { displayname: 'user2' }, roomIcon: 'icon-room', roomName: 'Room Name', path: '/path2' },
+		];
+		const notifObj = {
+			roomIcon: 'icon-room',
+			roomName: 'Room Name',
+			bodyShort: '',
+		};
+
+		const usernames = _.uniq(set.map(notifObj => notifObj && notifObj.user && notifObj.user.displayname));
+
+		const typeFromLength = (items) => {
+			if (items.length === 2) {
+				return 'dual';
+			} else if (items.length === 3) {
+				return 'triple';
+			}
+			return 'multiple';
+		};
+
+		if (usernames.length === 2 || usernames.length === 3) {
+			notifObj.bodyShort = `[[${mergeId}-${typeFromLength(usernames)}, ${usernames.join(', ')}, ${notifObj.roomIcon}, ${notifObj.roomName}]]`;
+		}
+		notifObj.path = set[set.length - 1].path;
+		assert.strictEqual(
+			notifObj.bodyShort,
+			`[[${mergeId}-dual, user1, user2, icon-room, Room Name]]`
+		);
+		assert.strictEqual(notifObj.path, '/path2');
+	});
+
+	it('should format bodyShort correctly when there are more than 3 usernames', () => {
+		const mergeId = 'notifications:user-posted-in-public-room';
+		const set = [
+			{ user: { displayname: 'user1' }, roomIcon: 'icon-room', roomName: 'Room Name', path: '/path1' },
+			{ user: { displayname: 'user2' }, roomIcon: 'icon-room', roomName: 'Room Name', path: '/path2' },
+			{ user: { displayname: 'user3' }, roomIcon: 'icon-room', roomName: 'Room Name', path: '/path3' },
+			{ user: { displayname: 'user4' }, roomIcon: 'icon-room', roomName: 'Room Name', path: '/path4' },
+		];
+		const notifObj = {
+			roomIcon: 'icon-room',
+			roomName: 'Room Name',
+			bodyShort: '',
+		};
+		const usernames = _.uniq(set.map(notifObj => notifObj && notifObj.user && notifObj.user.displayname));
+
+		const typeFromLength = (items) => {
+			if (items.length === 2) {
+				return 'dual';
+			} else if (items.length === 3) {
+				return 'triple';
+			}
+			return 'multiple';
+		};
+
+		if (usernames.length > 3) {
+			notifObj.bodyShort = `[[${mergeId}-${typeFromLength(usernames)}, ${usernames.slice(0, 2).join(', ')}, ${usernames.length - 2}, ${notifObj.roomIcon}, ${notifObj.roomName}]]`;
+		}
+		notifObj.path = set[set.length - 1].path;
+
+		assert.strictEqual(
+			notifObj.bodyShort,
+			`[[${mergeId}-multiple, user1, user2, 2, icon-room, Room Name]]`
+		);
+		assert.strictEqual(notifObj.path, '/path4');
 	});
 });
