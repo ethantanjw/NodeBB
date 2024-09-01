@@ -5,8 +5,6 @@ const assert = require('assert');
 const nconf = require('nconf');
 const util = require('util');
 
-const _ = require('lodash');
-
 const db = require('./mocks/databasemock');
 const meta = require('../src/meta');
 const user = require('../src/user');
@@ -432,5 +430,4 @@ describe('Notifications', () => {
 			});
 		});
 	});
-
 });

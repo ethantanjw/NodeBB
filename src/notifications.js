@@ -438,18 +438,15 @@ Notifications.merge = async function (notifications) {
 				return 'multiple';
 			}
 			let set;
-			const differentiatiors_length = differentiators.length;
-			if (differentiator === 0 && differentiatiors_length === 1) {
+			const differentiated = differentiators.length > 1 ? differentiator : 0;
+			if (differentiated === 0) {
 				set = isolated;
 			} else {
 				set = isolated.filter(n => n.mergeId === (`${mergeId}|${differentiator}`));
 			}
 
 			const modifyIndex = notifications.indexOf(set[0]);
-			if (modifyIndex === -1) {
-				return notifications;
-			}
-			if (set.length === 1) {
+			if (modifyIndex === -1 || set.length === 1) {
 				return notifications;
 			}
 			const notifObj = notifications[modifyIndex];
