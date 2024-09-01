@@ -438,14 +438,18 @@ Notifications.merge = async function (notifications) {
 				return 'multiple';
 			}
 			let set;
-			if (differentiator === 0 && differentiators.length === 1) {
+			const differentiatiors_length = differentiators.length;
+			if (differentiator === 0 && differentiatiors_length === 1) {
 				set = isolated;
 			} else {
 				set = isolated.filter(n => n.mergeId === (`${mergeId}|${differentiator}`));
 			}
 
 			const modifyIndex = notifications.indexOf(set[0]);
-			if (modifyIndex === -1 || set.length === 1) {
+			if (modifyIndex === -1) {
+				return notifications;
+			}
+			if (set.length === 1) {
 				return notifications;
 			}
 			const notifObj = notifications[modifyIndex];
@@ -463,7 +467,7 @@ Notifications.merge = async function (notifications) {
 					const usernames = _.uniq(set.map(notifObj => notifObj && notifObj.user && notifObj.user.displayname));
 					if (usernames.length === 2 || usernames.length === 3) {
 						notifObj.bodyShort = `[[${mergeId}-${typeFromLength(usernames)}, ${usernames.join(', ')}, ${notifObj.roomIcon}, ${notifObj.roomName}]]`;
-					} else if (usernames.length > 3) {
+					} if (usernames.length > 3) {
 						notifObj.bodyShort = `[[${mergeId}-${typeFromLength(usernames)}, ${usernames.slice(0, 2).join(', ')}, ${usernames.length - 2}, ${notifObj.roomIcon}, ${notifObj.roomName}]]`;
 					}
 
