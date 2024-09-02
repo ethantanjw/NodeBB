@@ -437,14 +437,8 @@ Notifications.merge = async function (notifications) {
 				}
 				return 'multiple';
 			}
-			let set;
-			const differentiated = differentiators.length > 1 ? differentiator : 0;
-			if (differentiated === 0) {
-				set = isolated;
-			} else {
-				set = isolated.filter(n => n.mergeId === (`${mergeId}|${differentiator}`));
-			}
-
+			console.log('Ethan Tan');
+			const set = (differentiator === 0 && differentiators.length === 1) ? isolated : isolated.filter(n => n.mergeId === (`${mergeId}|${differentiator}`));
 			const modifyIndex = notifications.indexOf(set[0]);
 			if (modifyIndex === -1 || set.length === 1) {
 				return notifications;
