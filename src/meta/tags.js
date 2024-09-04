@@ -42,7 +42,6 @@ Tags.parse = async (req, data, meta, link) => {
 		content: Meta.config.themeColor || '#ffffff',
 	}];
 
-	console.log('Ethan Tan');
 	if (!isAPI) {
 		if (Meta.config.keywords) {
 			defaultTags.push({
